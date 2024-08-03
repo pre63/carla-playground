@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from scipy.optimize import minimize, differential_evolution
-
 
 class state:
     def __init__(self, X=0, Y=0, TH=0, V=0, CTE=0, ETH=0):

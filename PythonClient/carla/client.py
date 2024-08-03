@@ -118,35 +118,13 @@ class CarlaClient(object):
         measurements followed by the raw data of the sensors.
         """
         # Read measurements.
-        print( self._sensors)
         data = self._stream_client.read()
         if not data:
-            logging.warning('No measurement data received from server.')
-            return None, {}
+            raise RuntimeError('failed to read data from server')
         pb_message = carla_protocol.Measurements()
         pb_message.ParseFromString(data)
         # Read sensor data.
-        sensor_data = dict(x for x in self._read_sensor_data() if x is not None)
-        return pb_message, sensor_data
-
-    def _read_sensor_data(self):
-        while True:
-            data = self._stream_client.read()
-            if data:
-                yield self._parse_sensor_data(data)
-            else:
-                logging.warning('No sensor data received from server.')
-                yield None
-
-    def _parse_sensor_data(self, data):
-        sensor_id = struct.unpack('<L', data[0:4])[0]
-        if sensor_id in self._sensors:
-            parser = self._sensors[sensor_id]
-            return parser.name, parser.parse_raw_data(data[4:])
-        else:
-            logging.warning(f'Invalid sensor ID: {sensor_id}')
-            return None
-
+        return pb_message, dict(x for x in self._read_sensor_data())
 
     def send_control(self, *args, **kwargs):
         """
@@ -176,7 +154,6 @@ class CarlaClient(object):
         self._control_client.disconnect()
         # Send new episode request.
         pb_message = carla_protocol.RequestNewEpisode()
-        print('pbep', pb_message)
         pb_message.ini_file = str(carla_settings)
         self._world_client.write(pb_message.SerializeToString())
         # Read scene description.
@@ -190,23 +167,17 @@ class CarlaClient(object):
         self._is_episode_requested = True
         return pb_message
 
-    # def _read_sensor_data(self):
-    #     while True:
-    #         data = self._stream_client.read()
-    #         if data:
-    #             yield self._parse_sensor_data(data)
-    #         else:
-    #             yield 0
+    def _read_sensor_data(self):
+        while True:
+            data = self._stream_client.read()
+            if not data:
+                return
+            yield self._parse_sensor_data(data)
 
-    # def _parse_sensor_data(self, data):
-    #     print(data)
-    #     sensor_id = struct.unpack('<L', data[0:4])[0]
-    #     print(sensor_id)
-    #     if (len(self._sensors) >= sensor_id):
-    #         parser = self._sensors[sensor_id]
-    #         return parser.name, parser.parse_raw_data(data[4:])
-    #     else:
-    #         return 0
+    def _parse_sensor_data(self, data):
+        sensor_id = struct.unpack('<L', data[0:4])[0]
+        parser = self._sensors[sensor_id]
+        return parser.name, parser.parse_raw_data(data[4:])
 
 
 def _make_sensor_parsers(sensors):

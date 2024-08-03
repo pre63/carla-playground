@@ -7,8 +7,74 @@ import csv
 import cutils
 import numpy as np
 from mpc_utils import state, inputs, model
-from scipy.optimize import minimize, differential_evolution
+
 import matplotlib.pyplot as plt
+
+
+
+import numpy as np
+
+def minimize(func, x0, method='BFGS', jac=None, tol=1e-6, options=None):
+    if method == 'BFGS':
+        return _gradient_descent(func, x0, jac, tol, options)
+    elif method == 'Nelder-Mead':
+        return _nelder_mead(func, x0, tol, options)
+    else:
+        raise ValueError(f"Method '{method}' is not supported.")
+
+def _gradient_descent(func, x0, jac, tol, options):
+    learning_rate = options.get('learning_rate', 0.01)
+    max_iter = options.get('max_iter', 1000)
+    x = np.array(x0, dtype=float)
+    for i in range(max_iter):
+        gradient = np.array(jac(x))
+        x_new = x - learning_rate * gradient
+        if np.linalg.norm(x_new - x) < tol:
+            break
+        x = x_new
+    return {'x': x, 'fun': func(x), 'success': True, 'message': 'Optimization terminated successfully.'}
+
+def _nelder_mead(func, x0, tol, options):
+    max_iter = options.get('max_iter', 1000)
+    alpha, gamma, rho, sigma = 1, 2, 0.5, 0.5
+    n = len(x0)
+    simplex = np.zeros((n + 1, n))
+    simplex[0] = x0
+    for i in range(1, n + 1):
+        x = np.array(x0, dtype=float)
+        x[i - 1] += 1
+        simplex[i] = x
+    for k in range(max_iter):
+        simplex = sorted(simplex, key=func)
+        centroid = np.mean(simplex[:-1], axis=0)
+        xr = centroid + alpha * (centroid - simplex[-1])
+        if func(xr) < func(simplex[0]):
+            xe = centroid + gamma * (xr - centroid)
+            if func(xe) < func(xr):
+                simplex[-1] = xe
+            else:
+                simplex[-1] = xr
+        elif func(xr) < func(simplex[-2]):
+            simplex[-1] = xr
+        else:
+            if func(xr) < func(simplex[-1]):
+                xc = centroid + rho * (xr - centroid)
+                if func(xc) < func(xr):
+                    simplex[-1] = xc
+                else:
+                    for i in range(1, len(simplex)):
+                        simplex[i] = simplex[0] + sigma * (simplex[i] - simplex[0])
+            else:
+                xc = centroid + rho * (simplex[-1] - centroid)
+                if func(xc) < func(simplex[-1]):
+                    simplex[-1] = xc
+                else:
+                    for i in range(1, len(simplex)):
+                        simplex[i] = simplex[0] + sigma * (simplex[i] - simplex[0])
+        if np.std([func(x) for x in simplex]) < tol:
+            break
+    return {'x': simplex[0], 'fun': func(simplex[0]), 'success': True, 'message': 'Optimization terminated successfully.'}
+
 
 init_state = state()
 class Controller2D(object):
