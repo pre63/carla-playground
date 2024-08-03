@@ -1,5 +1,4 @@
-CARLA Simulator
-===============
+# CARLA Simulator
 
 Thanks for downloading CARLA!
 

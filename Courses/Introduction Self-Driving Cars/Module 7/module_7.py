@@ -22,18 +22,17 @@ import argparse
 import os
 import sys
 
-carlaPath = os.path.abspath(sys.path[0] + '/..')
+carlaPath = os.path.abspath(sys.path[0] + '/../..')
+print(carlaPath)
 sys.path.append(carlaPath)
 
-from carla.controller import utils
 from carla.tcp import TCPConnectionError
 from carla.settings import CarlaSettings
 from carla.client import make_carla_client, VehicleControl
 from carla import sensor
 import configparser
 import controller2d
-
-import live_plotter as lv   # Custom live plotting library
+import carla.live_plotter as lv
 
 
 """
