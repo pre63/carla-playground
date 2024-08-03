@@ -1,92 +1,92 @@
-# CARLA Simulator
+# CARLA Playground: Hack the Road
 
-Thanks for downloading CARLA!
+Welcome to the CARLA Playground. Here's how to get it running and take it for a spin.
 
-Execute "CarlaUE4.sh" to launch CARLA.
+## Quick Launch
 
-For more details and running options please refer to our online documentation
+```sh
+./CarlaUE4.sh /Game/Maps/RaceTrack -windowed -carla-server -benchmark -fps=30
+```
 
-http://carla.readthedocs.io
+For the nitty-gritty details and extra options, check out the [online documentation](http://carla.readthedocs.io).
 
-# Ubuntu 22.xx
+## Ubuntu 22.xx Setup Guide
 
-I dind't start with a fresh install so feel free to PR the mistakes you find.
+Started from a non-fresh install? No worries, this guide has you covered. Found a mistake? Drop a PR!
 
-## Install Python 3.6.15
+### Step 1: Install Python 3.6.15
+
+First, update your system and get all the essentials:
 
 ```sh
 sudo apt-get update
-
 sudo apt-get install -y make build-essential libssl-dev zlib1g-dev \
-    libbz2-dev libreadline-dev libsqlite3-dev  curl llvm libncurses5-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev curl llvm libncurses5-dev \
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev \
-    libgdbm-dev libnss3-dev libedit-dev libc6-dev
-
-sudo apt-get install -y libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev \
+    libgdbm-dev libnss3-dev libedit-dev libc6-dev \
+    libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev \
     libsdl1.2-dev libsmpeg-dev libportmidi-dev ffmpeg libswscale-dev \
-    libavformat-dev libavcodec-dev libfreetype6-dev
+    libavformat-dev libavcodec-dev libfreetype6-dev \
+    libatlas-base-dev gfortran
+```
 
-sudo apt-get install -y  libatlas-base-dev gfortran
+Download and compile Python 3.6.15:
 
+```sh
 cd /opt
-
-sudo curl -0 https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz
-
+sudo curl -O https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz
 sudo tar -xzf Python-3.6.15.tgz
-
 cd Python-3.6.15/
-
 sudo ./configure --enable-optimizations
-
 sudo make altinstall
 ```
 
-Might exit with erros but check if it works before abandoning.
-
-To check the installed version, execute the command:
+Check if the installation was successful:
 
 ```sh
 python3.6 -V
+# Should output: Python 3.6.15
 ```
+
+### Step 2: Install pip
+
+Get `pip` up and running:
 
 ```sh
-> Python 3.6.15
-```
-
-## Install pip
-
-```
-python -m ensurepip --default-pip
+python3.6 -m ensurepip --default-pip
 which pip3.6
 pip3.6 -V
 ```
 
-## Ceate a virtual environment
+### Step 3: Create a Virtual Environment
+
+Set up a workspace and a virtual environment:
 
 ```sh
-
 cd $HOME/
-mkdir workspace
+mkdir -p workspace
 cd workspace
 python3.6 -m venv .venv
 ```
 
-## Install deps
-Got to do it one at a time... Becuase reasons.
+### Step 4: Install Dependencies
 
-`scipy` will not install see minimise implementation
+Install necessary Python packages. Note: `scipy` is out.
 
-```
+```sh
 cd $HOME/workspace
 
-pip install pyyaml jinja2 typeguard
 pip install --upgrade pip setuptools wheel
-
+pip install pyyaml jinja2 typeguard
 pip install numpy==1.14.5
 pip install matplotlib==2.2.2
 pip install pillow==3.1.2
 pip install pygame==1.9.4
 pip install future==0.16.0
 pip install protobuf==3.6.0
-
 ```
+
+
+---
+
+You’re all set! Enjoy the ride with CARLA. If you hit any bumps, remember, PRs are welcome!
