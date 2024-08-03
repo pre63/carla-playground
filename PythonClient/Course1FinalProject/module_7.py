@@ -217,8 +217,6 @@ def create_controller_output_dir():
   CONTROLLER_OUTPUT_FOLDER = os.path.dirname(os.path.realpath(__file__)) +\
       '/controller_output/'
 
-  print(CONTROLLER_OUTPUT_FOLDER)
-
   if not os.path.exists(CONTROLLER_OUTPUT_FOLDER):
     os.makedirs(CONTROLLER_OUTPUT_FOLDER)
 
