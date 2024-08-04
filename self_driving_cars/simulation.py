@@ -31,7 +31,7 @@ from carla.settings import CarlaSettings
 from carla.client import make_carla_client, VehicleControl
 from carla import sensor
 import configparser
-import controller2d
+import controller_2d
 import carla.live_plotter as lv
 
 
@@ -361,7 +361,7 @@ def exec_waypoint_nav_demo(args):
     #############################################
     # This is where we take the controller2d.py class
     # and apply it to the simulator
-    controller = controller2d.Controller2D(waypoints)
+    controller = controller_2d.Controller2D(waypoints)
 
     #############################################
     # Determine simulation average timestep (and total frames)
