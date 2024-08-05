@@ -86,7 +86,6 @@ pip install future==0.16.0
 pip install protobuf==3.6.0
 ```
 
-
 ---
 
 You’re all set! Enjoy the ride with CARLA. If you hit any bumps, remember, PRs are welcome!
