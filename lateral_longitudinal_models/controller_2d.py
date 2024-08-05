@@ -4,15 +4,18 @@
 2D Controller Class to be used for the CARLA waypoint follower demo.
 """
 
-import cutils
+
 import numpy as np
 
 from longitudinal_model import LongitudinalModel
 from lateral_model import LateralModel
 
+from utils.cutils import CUtils
+
+
 class Controller2D:
   def __init__(self, waypoints):
-    self.vars = cutils.CUtils()
+    self.vars = CUtils()
     self._current_x = 0
     self._current_y = 0
     self._current_yaw = 0

@@ -8,7 +8,7 @@
 # Date: October 29, 2018
 
 import numpy as np
-import scipy.spatial
+from utils.scipy import cdist
 from math import sin, cos, pi, sqrt
 
 
@@ -95,10 +95,8 @@ class CollisionChecker:
         # the collision_free flag should be set to false for this flag
         for k in range(len(obstacles)):
           collision_dists = \
-              scipy.spatial.distance.cdist(obstacles[k],
-                                           circle_locations)
-          collision_dists = np.subtract(collision_dists,
-                                        self._circle_radii)
+              scipy.spatial.distance.cdist(obstacles[k], circle_locations)
+          collision_dists = np.subtract(collision_dists, self._circle_radii)
           collision_free = collision_free and \
               not np.any(collision_dists < 0)
 

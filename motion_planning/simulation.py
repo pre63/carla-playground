@@ -24,19 +24,18 @@ import math
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
-import motion_planning.controller_2d as controller_2d
+import controller_2d as controller_2d
 import configparser
-import local_planner
+import motion_planning.local_planner as local_planner
 import behavioural_planner
 
 # Script level imports
 sys.path.append(os.path.abspath(sys.path[0] + '/..'))
-import live_plotter as lv   # Custom live plotting library
+import utils.live_plotter as lv
 from carla import sensor
 from carla.client import make_carla_client, VehicleControl
 from carla.settings import CarlaSettings
 from carla.tcp import TCPConnectionError
-from carla.controller import utils
 
 """
 Configurable params
@@ -80,7 +79,7 @@ PLOT_BOT = 0.1
 PLOT_WIDTH = 0.8
 PLOT_HEIGHT = 0.8
 
-WAYPOINTS_FILENAME = 'course4_waypoints.txt'  # waypoint file to load
+WAYPOINTS_FILENAME = 'params/course4_waypoints.txt'  # waypoint file to load
 DIST_THRESHOLD_TO_LAST_WAYPOINT = 2.0  # some distance from last position before
 # simulation ends
 
@@ -105,9 +104,10 @@ LP_FREQUENCY_DIVISOR = 2                # Frequency divisor to make the
 # number.
 
 # Course 4 specific parameters
-C4_STOP_SIGN_FILE = 'stop_sign_params.txt'
+
+C4_STOP_SIGN_FILE = './motion_planning/params/stop_sign_params.txt'
 C4_STOP_SIGN_FENCELENGTH = 5        # m
-C4_PARKED_CAR_FILE = 'parked_vehicle_params.txt'
+C4_PARKED_CAR_FILE = 'motion_planning/params/parked_vehicle_params.txt'
 
 # Path interpolation parameters
 INTERP_MAX_POINTS_PLOT = 10   # number of points used for displaying
@@ -170,8 +170,8 @@ class Timer(object):
     self._lap_time = time.time()
 
   def ticks_per_second(self):
-    return float(self.step - self._lap_step) /\
-        self.elapsed_seconds_since_lap()
+    self.elapsed_seconds_since_lap()
+    return float(self.step - self._lap_step)
 
   def elapsed_seconds_since_lap(self):
     return time.time() - self._lap_time
@@ -237,8 +237,7 @@ def get_player_collided_flag(measurement,
   current_collision_other = player_meas.collision_other
 
   collided_vehicles = current_collision_vehicles > prev_collision_vehicles
-  collided_pedestrians = current_collision_pedestrians > \
-      prev_collision_pedestrians
+  collided_pedestrians = current_collision_pedestrians > prev_collision_pedestrians
   collided_other = current_collision_other > prev_collision_other
 
   return (collided_vehicles or collided_pedestrians or collided_other,
@@ -347,8 +346,8 @@ def exec_waypoint_nav_demo(args):
     # live plotting is enabled or how often the live plotter updates
     # during the simulation run.
     config = configparser.ConfigParser()
-    config.read(os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), 'options.cfg'))
+    config.read('motion_planning/params/options.cfg')
+
     demo_opt = config['Demo Parameters']
 
     # Get options
@@ -365,9 +364,9 @@ def exec_waypoint_nav_demo(args):
     #############################################
     # Stop sign (X(m), Y(m), Z(m), Yaw(deg))
     stopsign_data = None
-    stopsign_fences = []     # [x0, y0, x1, y1]
+    stopsign_fences = []      # [x0, y0, x1, y1]
     with open(C4_STOP_SIGN_FILE, 'r') as stopsign_file:
-      next(stopsign_file)  # skip header
+      next(stopsign_file)     # skip header
       stopsign_reader = csv.reader(stopsign_file,
                                    delimiter=',',
                                    quoting=csv.QUOTE_NONNUMERIC)

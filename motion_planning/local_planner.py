@@ -9,7 +9,7 @@
 
 import numpy as np
 import copy
-import path_optimizer
+import motion_planning.path_optimizer as path_optimizer
 import collision_checker
 import velocity_planner
 from math import sin, cos, pi, sqrt

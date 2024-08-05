@@ -32,7 +32,7 @@ from carla.client import make_carla_client, VehicleControl
 from carla import sensor
 import configparser
 import controller_2d
-import carla.live_plotter as lv
+import utils.live_plotter as lv
 
 
 """
@@ -74,7 +74,7 @@ PLOT_BOT = 0.1
 PLOT_WIDTH = 0.8
 PLOT_HEIGHT = 0.8
 
-WAYPOINTS_FILENAME = 'racetrack_waypoints.txt'  # waypoint file to load
+WAYPOINTS_FILENAME = 'lateral_longitudinal_models/params/racetrack_waypoints.txt'  # waypoint file to load
 DIST_THRESHOLD_TO_LAST_WAYPOINT = 2.0  # some distance from last position before
 # simulation ends
 
@@ -276,7 +276,7 @@ def exec_waypoint_nav_demo(args):
     # during the simulation run.
     config = configparser.ConfigParser()
     config.read(os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), 'options.cfg'))
+        os.path.dirname(os.path.realpath(__file__)), 'params/options.cfg'))
     demo_opt = config['Demo Parameters']
 
     # Get options

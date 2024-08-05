@@ -8,8 +8,6 @@
 # Date: October 29, 2018
 
 import numpy as np
-import scipy.optimize
-import scipy.integrate
 from math import sin, cos, pi, sqrt
 
 class PathOptimizer:
