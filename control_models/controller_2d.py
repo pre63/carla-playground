@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 2D Controller Class to be used for the CARLA waypoint follower demo.
 """

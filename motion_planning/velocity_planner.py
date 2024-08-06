@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
@@ -55,23 +54,6 @@ class VelocityPlanner:
     # stopped. Return the end velocity of the trajectory.
     return self._prev_trajectory[-1][2]
 
-  ######################################################
-  ######################################################
-  # MODULE 7: COMPUTE VELOCITY PROFILE
-  #   Read over the function comments to familiarize yourself with the
-  ######################################################
-  ######################################################
-  # Takes a path, and computes a velocity profile to our desired speed.
-  # - decelerate_to_stop denotes whether or not we need to decelerate to a
-  #   stop line
-  # - follow_lead_vehicle denotes whether or not we need to follow a lead
-  #   vehicle, with state given by lead_car_state.
-  # The order of precedence for handling these cases is stop sign handling,
-  # lead vehicle handling, then nominal lane maintenance. In a real velocity
-  # planner you would need to handle the coupling between these states, but
-  # for simplicity this project can be implemented by isolating each case.
-  # For all profiles, the required acceleration is given by self._a_max.
-  # Recall that the path is of the form [x_points, y_points, t_points].
   def compute_velocity_profile(self, path, desired_speed, ego_state,
                                closed_loop_speed, decelerate_to_stop,
                                lead_car_state, follow_lead_vehicle):
@@ -232,7 +214,7 @@ class VelocityPlanner:
       for i in reversed(range(stop_index)):
         dist = np.linalg.norm([path[0][i + 1] - path[0][i],
                                path[1][i + 1] - path[1][i]])
-        vi = calc_final_speed(vf, -self._a_max, dist)
+        vi = calc_final_speed(vf, self._a_max, dist)
         # We don't want to have points above the starting speed
         # along our profile, so clamp to start_speed.
         if vi > start_speed:
@@ -371,6 +353,7 @@ class VelocityPlanner:
     # We now need to reach the ego vehicle's speed by the time we reach the
     # time gap point, ramp_end_index, which therefore is the end of our ramp
     # velocity profile.
+    decel_distance = 0.0
     if desired_speed < start_speed:
       decel_distance = calc_distance(start_speed, desired_speed, -self._a_max)
     else:
@@ -473,17 +456,6 @@ class VelocityPlanner:
 
     return profile
 
-######################################################
-######################################################
-# MODULE 7: COMPUTE TOTAL DISTANCE WITH CONSTANT ACCELERATION
-#   Read over the function comments to familiarize yourself with the
-#   arguments and necessary variables to return. Then follow the TODOs
-#   (top-down) and use the surrounding comments as a guide.
-######################################################
-######################################################
-# Using d = (v_f^2 - v_i^2) / (2 * a), compute the distance
-# required for a given acceleration/deceleration.
-
 
 def calc_distance(v_i, v_f, a):
   """Computes the distance given an initial and final speed, with a constant
@@ -496,26 +468,8 @@ def calc_distance(v_i, v_f, a):
   returns:
       d: the final distance (m)
   """
-  pass
-
-  # TODO: INSERT YOUR CODE BETWEEN THE DASHED LINES
-  # ------------------------------------------------------------------
-  # d = ...
-  # return d
-  # ------------------------------------------------------------------
-
-######################################################
-######################################################
-# MODULE 7: COMPUTE FINAL SPEED WITH CONSTANT ACCELERATION
-#   Read over the function comments to familiarize yourself with the
-#   arguments and necessary variables to return. Then follow the TODOs
-#   (top-down) and use the surrounding comments as a guide.
-######################################################
-######################################################
-# Using v_f = sqrt(v_i^2 + 2ad), compute the final speed for a given
-# acceleration across a given distance, with initial speed v_i.
-# Make sure to check the discriminant of the radical. If it is negative,
-# return zero as the final speed.
+  d = (v_f**2 - v_i**2) / (2 * a)
+  return d
 
 
 def calc_final_speed(v_i, a, d):
@@ -529,10 +483,6 @@ def calc_final_speed(v_i, a, d):
   returns:
       v_f: the final speed (m/s)
   """
-  pass
-
-  # TODO: INSERT YOUR CODE BETWEEN THE DASHED LINES
-  # ------------------------------------------------------------------
-  # v_f = ...
-  # return v_f
-  # ------------------------------------------------------------------
+  dist = v_i**2 + 2 * a * d
+  v_f = sqrt(dist) if dist > 0 else 0
+  return v_f

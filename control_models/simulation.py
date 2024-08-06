@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -11,6 +9,7 @@ can be defined using way-points.
 
 STARTING in a moment...
 """
+
 from __future__ import print_function, division
 import matplotlib.pyplot as plt
 import csv
@@ -420,8 +419,8 @@ def exec_waypoint_nav_demo(args):
     # Uses the live plotter to generate live feedback during the simulation
     # The two feedback includes the trajectory feedback and
     # the controller feedback (which includes the speed tracking).
-    lp_traj = lv.LivePlotter(tk_title="Trajectory Trace")
-    lp_1d = lv.LivePlotter(tk_title="Controls Feedback")
+    lp_traj = lv.LivePlotter(title="Trajectory Trace")
+    lp_1d = lv.LivePlotter(title="Controls Feedback")
 
     ###
     # Add 2D position / trajectory plot

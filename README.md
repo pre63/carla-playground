@@ -71,13 +71,14 @@ python3.6 -m venv .venv
 
 ### Step 4: Install Dependencies
 
-Install necessary Python packages. Note: `scipy` is out.
+Install necessary Python packages. One at a time, it matters.
 
 ```sh
 cd $HOME/workspace
 
 pip install --upgrade pip setuptools wheel
 pip install pyyaml jinja2 typeguard
+pip install scipy==1.5.4
 pip install numpy==1.14.5
 pip install matplotlib==2.2.2
 pip install pillow==3.1.2

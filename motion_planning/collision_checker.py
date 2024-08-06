@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -8,7 +6,7 @@
 # Date: October 29, 2018
 
 import numpy as np
-from utils.scipy import cdist
+from scipy.spatial.distance import cdist
 from math import sin, cos, pi, sqrt
 
 
@@ -18,16 +16,6 @@ class CollisionChecker:
     self._circle_radii = circle_radii
     self._weight = weight
 
-  ######################################################
-  ######################################################
-  # MODULE 7: CHECKING FOR COLLISSIONS
-  #   Read over the function comments to familiarize yourself with the
-  #   arguments and necessary variables to return. Then follow the TODOs
-  #   (top-down) and use the surrounding comments as a guide.
-  ######################################################
-  ######################################################
-  # Takes in a set of paths and obstacles, and returns an array
-  # of bools that says whether or not each path is collision free.
   def collision_check(self, paths, obstacles):
     """Returns a bool array on whether each path is collision free.
 
@@ -81,11 +69,8 @@ class CollisionChecker:
         # path[1][j].
         circle_locations = np.zeros((len(self._circle_offsets), 2))
 
-        # TODO: INSERT YOUR CODE BETWEEN THE DASHED LINES
-        # --------------------------------------------------------------
-        # circle_locations[:, 0] = ...
-        # circle_locations[:, 1] = ...
-        # --------------------------------------------------------------
+        circle_locations[:, 0] = [i * int(cos(path[2][j])) for i in self._circle_offsets] + path[0][j]
+        circle_locations[:, 1] = [i * int(sin(path[2][j])) for i in self._circle_offsets] + path[1][j]
 
         # Assumes each obstacle is approximated by a collection of
         # points of the form [x, y].
@@ -94,11 +79,11 @@ class CollisionChecker:
         # If so, then the path will collide with an obstacle and
         # the collision_free flag should be set to false for this flag
         for k in range(len(obstacles)):
-          collision_dists = \
-              scipy.spatial.distance.cdist(obstacles[k], circle_locations)
-          collision_dists = np.subtract(collision_dists, self._circle_radii)
-          collision_free = collision_free and \
-              not np.any(collision_dists < 0)
+          collision_dists = cdist(obstacles[k],
+                                  circle_locations)
+          collision_dists = np.subtract(collision_dists,
+                                        self._circle_radii)
+          collision_free = collision_free and not np.any(collision_dists < 0)
 
           if not collision_free:
             break
@@ -109,21 +94,6 @@ class CollisionChecker:
 
     return collision_check_array
 
-  ######################################################
-  ######################################################
-  # MODULE 7: SELECTING THE BEST PATH INDEX
-  #   Read over the function comments to familiarize yourself with the
-  #   arguments and necessary variables to return. Then follow the TODOs
-  #   (top-down) and use the surrounding comments as a guide.
-  ######################################################
-  ######################################################
-  # Selects the best path in the path set, according to how closely
-  # it follows the lane centerline, and how far away it is from other
-  # paths that are in collision.
-  # Disqualifies paths that collide with obstacles from the selection
-  # process.
-  # collision_check_array contains True at index i if paths[i] is
-  # collision-free, otherwise it contains False.
   def select_best_path_index(self, paths, collision_check_array, goal_state):
     """Returns the path index which is best suited for the vehicle to
     traverse.
@@ -157,14 +127,8 @@ class CollisionChecker:
     for i in range(len(paths)):
       # Handle the case of collision-free paths.
       if collision_check_array[i]:
-        # Compute the "distance from centerline" score.
-        # The centerline goal is given by goal_state.
-        # The exact choice of objective function is up to you.
-        # A lower score implies a more suitable path.
-        # TODO: INSERT YOUR CODE BETWEEN THE DASHED LINES
-        # --------------------------------------------------------------
-        # score = ...
-        # --------------------------------------------------------------
+
+        score = sqrt((goal_state[0] - paths[i][0][-1])**2 + (goal_state[1] - paths[i][1][-1])**2)
 
         # Compute the "proximity to other colliding paths" score and
         # add it to the "distance from centerline" score.
@@ -174,12 +138,7 @@ class CollisionChecker:
             continue
           else:
             if not collision_check_array[j]:
-              # TODO: INSERT YOUR CODE BETWEEN THE DASHED LINES
-              # --------------------------------------------------
-              # score += self._weight * ...
-              # --------------------------------------------------
-
-              pass
+              score += self._weight * sqrt((paths[j][0][-1] - paths[i][0][-1])**2 + (paths[j][0][-1] - paths[i][1][-1])**2)
 
       # Handle the case of colliding paths.
       else:
