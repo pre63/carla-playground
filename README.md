@@ -2,7 +2,7 @@
 
 This repository provides a guide for running CARLA on Ubuntu 22.xx, covering setup, dependencies, and quick launch instructions. CARLA, developed by the CVC group at the Universitat Autònoma de Barcelona (UAB), is a flexible open-source simulator for autonomous driving research. This guide builds on their work and aims to make CARLA accessible for experimentation and learning.
 
----
+
 
 ## Quick Launch
 
@@ -14,7 +14,6 @@ To quickly launch CARLA with the RaceTrack map in server mode at 30 FPS, run the
 
 For detailed options and advanced configurations, refer to the [official CARLA documentation](http://carla.readthedocs.io).
 
----
 
 ## Ubuntu 22.xx Setup Guide
 
@@ -97,7 +96,6 @@ pip install future==0.16.0
 pip install protobuf==3.6.0
 ```
 
----
 
 ## Acknowledgments
 
@@ -105,7 +103,6 @@ This guide and much of the underlying work in this repository are based on the C
 
 For more details about CARLA and its development, visit the [official CARLA GitHub repository](https://github.com/carla-simulator/carla). 
 
----
 
 ## Contribute
 
